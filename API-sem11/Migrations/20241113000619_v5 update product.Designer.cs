@@ -4,6 +4,7 @@ using API_sem11.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_sem11.Migrations
 {
     [DbContext(typeof(InvoiceContext))]
-    partial class InvoiceContextModelSnapshot : ModelSnapshot
+    [Migration("20241113000619_v5 update product")]
+    partial class v5updateproduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,9 +41,6 @@ namespace API_sem11.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -61,6 +61,9 @@ namespace API_sem11.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CustomerID")
+                        .HasColumnType("int");
+
                     b.Property<int>("InvoiceID")
                         .HasColumnType("int");
 
@@ -74,6 +77,8 @@ namespace API_sem11.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("DetailID");
+
+                    b.HasIndex("CustomerID");
 
                     b.HasIndex("InvoiceID");
 
@@ -135,6 +140,10 @@ namespace API_sem11.Migrations
 
             modelBuilder.Entity("API_sem11.Models.Detail", b =>
                 {
+                    b.HasOne("API_sem11.Models.Customer", null)
+                        .WithMany("Details")
+                        .HasForeignKey("CustomerID");
+
                     b.HasOne("API_sem11.Models.Invoice", "Invoice")
                         .WithMany("Details")
                         .HasForeignKey("InvoiceID")
@@ -155,12 +164,19 @@ namespace API_sem11.Migrations
             modelBuilder.Entity("API_sem11.Models.Invoice", b =>
                 {
                     b.HasOne("API_sem11.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Invoices")
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("API_sem11.Models.Customer", b =>
+                {
+                    b.Navigation("Details");
+
+                    b.Navigation("Invoices");
                 });
 
             modelBuilder.Entity("API_sem11.Models.Invoice", b =>

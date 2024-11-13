@@ -19,19 +19,19 @@ namespace API_sem11.Controllers
         [HttpGet]
         public List<Product> GetAll()
         {
-            return _context.Products.ToList();
+            return _context.Products.Where(p => !p.IsDeleted).ToList();
         }
 
         [HttpGet]
         public List<Product> GetByName(string name)
         {
-            return _context.Products.Where(x => x.Name.Contains(name)).ToList();
+            return _context.Products.Where(p => p.Name.Contains(name) && !p.IsDeleted).ToList();
         }
 
         [HttpGet]
         public Product GetById(int id)
         {
-            return _context.Products.Where(x => x.ProductID == id).FirstOrDefault();
+            return _context.Products.Where(p => p.ProductID == id && !p.IsDeleted).FirstOrDefault();
         }
 
         [HttpPost]
@@ -39,32 +39,29 @@ namespace API_sem11.Controllers
         {
             _context.Products.Add(product);
             _context.SaveChanges();
-            
         }
-        
+
         [HttpPut]
-        public Product Update(Product product)
+        public void Update(int id, Product updatedProduct)
         {
-            var existingProduct = _context.Products.Find(product.ProductID);
-            if (existingProduct != null)
+            var product = _context.Products.Find(id);
+            if (product != null && !product.IsDeleted)
             {
-                _context.Entry(existingProduct).CurrentValues.SetValues(product);
+                product.Name = updatedProduct.Name;
+                product.Price = updatedProduct.Price;
                 _context.SaveChanges();
             }
-            return product;
         }
 
         [HttpDelete]
-        public Product Delete (int id)
+        public void Delete(int id)
         {
             var product = _context.Products.Find(id);
-            if (product != null)
+            if (product != null && !product.IsDeleted)
             {
-                _context.Products.Remove(product);
+                product.IsDeleted = true;
                 _context.SaveChanges();
             }
-            return product;
         }
-
     }
 }
