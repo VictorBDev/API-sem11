@@ -11,7 +11,7 @@ namespace API_sem11.Models
         public DbSet<Invoice> Invoices { get; set; } //Nombre de clase y nombre de tabla en db
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=RED\\SQLEXPRESS; Database=APIsem11; Integrated Security=True;Trust Server Certificate=True ");
+            optionsBuilder.UseSqlServer("Server=RED\\SQLEXPRESS; Database=APIsem14; Integrated Security=True;Trust Server Certificate=True ");
         }
     }
 }

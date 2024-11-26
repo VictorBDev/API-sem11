@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_sem11.Migrations
 {
     [DbContext(typeof(InvoiceContext))]
-    [Migration("20241112233521_UpdateProductIdentity")]
-    partial class UpdateProductIdentity
+    [Migration("20241126232442_AddEmailToCustomers")]
+    partial class AddEmailToCustomers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,9 +37,16 @@ namespace API_sem11.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -61,9 +68,6 @@ namespace API_sem11.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CustomerID")
-                        .HasColumnType("int");
-
                     b.Property<int>("InvoiceID")
                         .HasColumnType("int");
 
@@ -77,8 +81,6 @@ namespace API_sem11.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("DetailID");
-
-                    b.HasIndex("CustomerID");
 
                     b.HasIndex("InvoiceID");
 
@@ -123,6 +125,9 @@ namespace API_sem11.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -137,10 +142,6 @@ namespace API_sem11.Migrations
 
             modelBuilder.Entity("API_sem11.Models.Detail", b =>
                 {
-                    b.HasOne("API_sem11.Models.Customer", null)
-                        .WithMany("Details")
-                        .HasForeignKey("CustomerID");
-
                     b.HasOne("API_sem11.Models.Invoice", "Invoice")
                         .WithMany("Details")
                         .HasForeignKey("InvoiceID")
@@ -161,19 +162,12 @@ namespace API_sem11.Migrations
             modelBuilder.Entity("API_sem11.Models.Invoice", b =>
                 {
                     b.HasOne("API_sem11.Models.Customer", "Customer")
-                        .WithMany("Invoices")
+                        .WithMany()
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("API_sem11.Models.Customer", b =>
-                {
-                    b.Navigation("Details");
-
-                    b.Navigation("Invoices");
                 });
 
             modelBuilder.Entity("API_sem11.Models.Invoice", b =>

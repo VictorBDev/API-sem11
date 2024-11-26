@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API_sem11.Migrations
 {
     /// <inheritdoc />
-    public partial class v3updatedatabase : Migration
+    public partial class AddEmailToCustomers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,11 +19,28 @@ namespace API_sem11.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DocumentNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DocumentNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.CustomerID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ProductID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ProductID);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,17 +75,11 @@ namespace API_sem11.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     SubTotal = table.Column<double>(type: "float", nullable: false),
                     ProductID = table.Column<int>(type: "int", nullable: false),
-                    InvoiceID = table.Column<int>(type: "int", nullable: false),
-                    CustomerID = table.Column<int>(type: "int", nullable: true)
+                    InvoiceID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Details", x => x.DetailID);
-                    table.ForeignKey(
-                        name: "FK_Details_Customers_CustomerID",
-                        column: x => x.CustomerID,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerID");
                     table.ForeignKey(
                         name: "FK_Details_Invoices_InvoiceID",
                         column: x => x.InvoiceID,
@@ -82,11 +93,6 @@ namespace API_sem11.Migrations
                         principalColumn: "ProductID",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Details_CustomerID",
-                table: "Details",
-                column: "CustomerID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Details_InvoiceID",
@@ -112,6 +118,9 @@ namespace API_sem11.Migrations
 
             migrationBuilder.DropTable(
                 name: "Invoices");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Customers");
